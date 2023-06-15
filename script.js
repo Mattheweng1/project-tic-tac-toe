@@ -30,27 +30,36 @@ var events = {
 const game = (() => {
     // variables and methods...
 
+    let playerOneTurn = true;
+
     const gameBoardArr = [];
 
     for (let i = 0; i < 9; i++) {
         gameBoardArr.push({mark: ''});
     }
 
+    /* setTimeout(() => events.emit('updateDisplay', gameBoardArr)); */
+    setTimeout(() => gameDisplay.updateDisplay(gameBoardArr));
+
     const markBoard = (index) => {
         if (gameBoardArr[index].mark === '') {
-            if (player1Turn) {
+            if (playerOneTurn) {
                 gameBoardArr[index].mark = 'x';
-                evaluateTurn();
+                /* events.emit('updateDisplay', gameBoardArr); */
+                gameDisplay.updateDisplay(gameBoardArr);
+                setTimeout(() => evaluateTurn());
+                /* evaluateTurn(); */
             } else {
                 gameBoardArr[index].mark = 'o';
-                evaluateTurn();
+                /* events.emit('updateDisplay', gameBoardArr); */
+                gameDisplay.updateDisplay(gameBoardArr);
+                setTimeout(() => evaluateTurn());
+                /* evaluateTurn(); */
             }
             
         }
         
     }
-
-    let player1Turn = true;
 
     const checkWin = (mark) => {
         switch (true) {
@@ -88,14 +97,16 @@ const game = (() => {
     }
 
     const clearBoard = () => {
+        playerOneTurn = true;
+
         gameBoardArr.forEach((obj) => {
             obj.mark = '';
+            /* events.emit('updateDisplay', gameBoardArr); */
+            gameDisplay.updateDisplay(gameBoardArr);
         })
     }
     
     const evaluateTurn = () => {
-        console.log(gameBoardArr);
-
         switch (true) {
             case (checkWin('x')):
                 alert('Player 1 wins!');
@@ -108,8 +119,9 @@ const game = (() => {
             case (checkFullBoard()):
                 alert(`It's a tie!`);
                 clearBoard();
+                break;
             default:
-                player1Turn = !player1Turn;
+                playerOneTurn = !playerOneTurn;
         }
     }
 
@@ -122,21 +134,43 @@ const game = (() => {
     };
 })();
 
-const displayController = (() => {
+const gameDisplay = (() => {
     // variables and methods...
 
-    
+    /* console.log(document.getElementById('gameBoard').children[0]); */
+
+    /* events.on('updateDisplay', (gameBoardArr) => updateDisplay(gameBoardArr)); */
+    Array.from(document.getElementById('gameBoard').children).forEach((cell) => {
+        cell.addEventListener('click', () => game.markBoard(cell.getAttribute('data-index')));
+    })
+
+    const updateDisplay = (gameBoardArr) => {
+        for (let i = 0; i < 9; i++) {
+            document.getElementById('gameBoard').children[i].setAttribute('data-index', i);
+            document.getElementById('gameBoard').children[i].textContent = gameBoardArr[i].mark;
+        }
+    }
 
     return {
         // public methods
 
+        updateDisplay
     };
 })();
 
-const Player = (name) => {
+const Player = () => {
+
+    const setName = (name) => this.name = name;
 
     return {
         // public methods
-
+        
+        setName
     };
 };
+
+const playerOne = Player();
+playerOne.setName('Player 1');
+
+const playerTwo = Player();
+playerTwo.setName('Player 2');

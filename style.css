@@ -1,0 +1,76 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: inherit;
+    font-family: inherit;
+    color: inherit;
+}
+
+body {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 100vh;
+}
+
+#header {
+    display: grid;
+}
+
+#header .title {
+    justify-self: center;
+    align-self: center;
+}
+
+#content {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto 1fr;
+}
+
+#gameOptions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+    justify-items: center;
+}
+
+#newGameBtn {
+    grid-column: 1/-1;
+}
+
+#scoreBoard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    align-items: center;
+    justify-items: center;
+}
+
+#gameMessage {
+    align-self: center;
+    justify-self: center;
+}
+
+#gameBoard {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 4px;
+    align-self: center;
+    justify-self: center;
+    height: 50vh;
+    aspect-ratio: 1/1;
+    background-color: blue;
+    color: red;
+    font-size: 14vh;
+}
+
+.gameBoardCell {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+    background-color: white;
+}

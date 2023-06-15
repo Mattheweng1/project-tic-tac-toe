@@ -9,6 +9,54 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    
+    <div id="header">
+        <div class="title">Tic Tac Toe</div>
+    </div>
+    <div id="content">
+        <form id="gameOptions" action="index.html" method="get">
+            <label for="playerOneName">
+                <div>Player 1:</div>
+                <input type="text" name="playerOneName" id="playerOneName">
+            </label>
+            <fieldset>
+                <legend>Opponent</legend>
+                <label for="playerTwo">
+                    <input type="radio" name="opponent" id="playerTwo" value="playerTwo" checked>
+                    <div>Player 2</div>
+                </label>
+                <label for="guesser">
+                    <input type="radio" name="opponent" id="guesser" value="guesser">
+                    <div>Guesser</div>
+                </label>
+                <label for="mrUnbeatable">
+                    <input type="radio" name="opponent" id="mrUnbeatable" value="mrUnbeatable">
+                    <div>Mr. Unbeatable</div>
+                </label>
+            </fieldset>
+            <label for="playerTwoName">
+                <div>Player 2:</div>
+                <input type="text">
+            </label>
+            <div id="newGameBtn">New Game</div>
+        </form>
+        <div id="scoreBoard">
+            <div class="playerOne">Player 1</div>
+            <div class="opponent">Opponent</div>
+            <div class="playerOneScore">0</div>
+            <div class="opponentScore">0</div>
+        </div>
+        <div id="gameMessage">Player 1, make your move.</div>
+        <div id="gameBoard">
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+            <div class="gameBoardCell"></div>
+        </div>
+    </div>
 </body>
 </html>
