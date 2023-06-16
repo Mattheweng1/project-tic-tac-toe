@@ -33,7 +33,7 @@ const game = (() => {
     let playerOneTurn = true;
     let playerOneScore = 0;
     let opponentScore = 0;
-    let winner = 'none';
+    let winner = '';
     const gameBoardArr = [];
 
     for (let i = 0; i < 9; i++) {
@@ -43,7 +43,7 @@ const game = (() => {
     setTimeout(() => gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore));
 
     const markBoard = (index) => {
-        if (winner === 'none') {
+        if (winner === '') {
             if (gameBoardArr[index].mark === '') {
                 if (playerOneTurn) {
                     gameBoardArr[index].mark = 'x';
@@ -95,7 +95,7 @@ const game = (() => {
 
     const resetGame = () => {
         playerOneTurn = true;
-        winner = 'none';
+        winner = '';
 
         gameBoardArr.forEach((obj) => {
             obj.mark = '';
@@ -164,7 +164,7 @@ const gameDisplay = (() => {
     }
 
     const updateGameMessage = (playerOneTurn, winner) => {
-        if (winner === 'none') {
+        if (winner === '') {
             if (playerOneTurn) {
                 document.getElementById('gameMessage').textContent = `Player 1, make your move.`;
             } else {
@@ -174,6 +174,8 @@ const gameDisplay = (() => {
             document.getElementById('gameMessage').textContent = `Player 1 wins!`;
         } else if (winner === 'p2') {
             document.getElementById('gameMessage').textContent = `Player 2 wins!`;
+        } else if (winner === 'tie') {
+            document.getElementById('gameMessage').textContent = `It's a tie!`;
         }
     }
 
