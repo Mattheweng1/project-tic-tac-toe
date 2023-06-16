@@ -7,6 +7,28 @@
     color: inherit;
 }
 
+:root {
+    --cyan-50: #ecfeff;
+    --cyan-100: #cffafe;
+    --cyan-200: #a5f3fc;
+    --cyan-300: #67e8f9;
+    --cyan-400: #22d3ee;
+    --cyan-500: #06b6d4;
+    --cyan-600: #0891b2;
+    --cyan-700: #0e7490;
+    --cyan-800: #155e75;
+    --cyan-900: #164e63;
+    --cyan-950: #083344;
+    --orange-50: #fff7ed;
+    --orange-100: #ffedd5;
+    --orange-200: #fed7aa;
+    --orange-300: #fdba74;
+    --orange-400: #fb923c;
+    --orange-500: #f97316;
+    --orange-600: #ea580c;
+    --orange-700: #c2410c;
+}
+
 body {
     display: grid;
     grid-template-columns: 1fr;
@@ -16,17 +38,24 @@ body {
 
 #header {
     display: grid;
+    background-color: var(--cyan-500);
 }
 
 #header .title {
     justify-self: center;
     align-self: center;
+    padding: 16px;
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--cyan-200);
 }
 
 #content {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto auto 1fr;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 16px;
+    padding: 16px;
 }
 
 #gameOptions {
@@ -34,31 +63,176 @@ body {
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: auto auto;
     align-items: center;
-    justify-items: center;
+    row-gap: 16px;
+    padding: 16px 0;
+    background-color: var(--orange-100);
+    color: var(--orange-600);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
 }
 
-#newGameBtn {
+#gameOptions > label {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    gap: 8px;
+}
+
+#gameOptions > label > input {
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    height: 1.5rem;
+    width: 50%;
+    background-color: var(--orange-200);
+    color: var(--orange-700);
+    font-weight: bold;
+    text-align: center;
+    padding: 0.5rem;
+    box-shadow: 0px 0px 10px -8px transparent;
+    transition: 0.5s ease-in-out;
+}
+
+#gameOptions > label > input:focus {
+    outline: none;
+    background-color: var(--orange-300);
+    box-shadow: -4px -2px 10px -8px black;
+    transition: 0.5s ease-in-out;
+}
+
+#gameOptions fieldset {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    padding: 8px 32px;
+    gap: 32px;
+    border: 2px solid var(--orange-300);
+}
+
+#gameOptions fieldset label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    color: var(--orange-500);
+}
+
+fieldset > label > input {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+fieldset > label > input:checked + svg > .c-form__radio-tick {
+    stroke-dashoffset: 0;
+}
+
+fieldset > label > input:focus + svg > .c-form__radio-circle {
+    stroke: var(--orange-500);
+}
+
+.c-form__radio-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+    vertical-align: middle;
+}
+
+.c-form__radio-circle {
+    fill: none;
+    stroke: var(--orange-300);
+    stroke-width: 1.5;
+    transition: stroke 0.3s ease-in;
+}
+
+.c-form__radio-tick {
+    fill: none;
+    stroke: var(--orange-700);
+    stroke-dasharray: 33; /* this is the length of the line */
+    stroke-dashoffset: 33; /* this is the length of the line */
+    stroke-width: 2;
+    transition: stroke-dashoffset 0.3s ease-in;
+}
+
+#newGame {
     grid-column: 1/-1;
-    background-color: orange;
+    justify-self: center;
+}
+
+.btn {
+    background-color: var(--orange-400);
+    color: var(--orange-50);
+    padding: 8px 16px;
+    border-radius: 4px;
+    box-shadow: -4px -2px 10px -8px black;
+    transition: 0.5s;
+}
+
+.btn:hover {
+    background-color: var(--orange-500);
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.btn:active {
+    background-color: var(--orange-700);
 }
 
 #scoreBoard {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    align-items: center;
+    justify-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.playerOneScoreContainer,
+.opponentScoreContainer {
+    display: grid;
     grid-template-rows: auto auto;
     align-items: center;
     justify-items: center;
+    background-color: var(--orange-400);
+    color: var(--orange-50);
+    padding: 8px 16px;
+    gap: 4px;
+    border-radius: 4px;
+    min-width: 50%;
+    box-shadow: -4px -2px 10px -8px black;
+}
+
+.playerOne,
+.opponent {
+    padding: 0 8px;
+    border-bottom: 2px solid var(--orange-600);
 }
 
 #gameMessage {
+    display: grid;
     align-self: center;
     justify-self: center;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    height: 75%;
+    background-color: var(--orange-100);
+    color: var(--orange-500);
+    padding: 8px 16px;
+    border-radius: 4px;
 }
 
 #gameRematch {
     align-self: center;
     justify-self: center;
-    background-color: orange;
+    font-weight: bold;
+    font-size: 1rem;
 }
 
 #gameBoard {
@@ -70,8 +244,8 @@ body {
     justify-self: center;
     height: 50vh;
     aspect-ratio: 1/1;
-    background-color: blue;
-    color: red;
+    background-color: var(--cyan-700);
+    color: var(--orange-700);
     font-size: 14vh;
 }
 

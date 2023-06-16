@@ -144,7 +144,7 @@ const game = (() => {
 const gameDisplay = (() => {
     // variables and methods...
 
-    document.getElementById('newGameBtn').addEventListener('click', () => game.setNewGame());
+    document.getElementById('newGame').addEventListener('click', () => game.setNewGame());
     document.getElementById('gameRematch').addEventListener('click', () => game.resetGame());
     Array.from(document.getElementById('gameBoard').children).forEach((cell) => {
         cell.addEventListener('click', () => game.markBoard(cell.getAttribute('data-index')));
@@ -166,9 +166,9 @@ const gameDisplay = (() => {
     const updateGameMessage = (playerOneTurn, winner) => {
         if (winner === '') {
             if (playerOneTurn) {
-                document.getElementById('gameMessage').textContent = `Player 1, make your move.`;
+                document.getElementById('gameMessage').textContent = `Player 1's turn.`;
             } else {
-                document.getElementById('gameMessage').textContent = `Player 2, make your move.`;
+                document.getElementById('gameMessage').textContent = `Player 2's turn.`;
             }
         } else if (winner === 'p1') {
             document.getElementById('gameMessage').textContent = `Player 1 wins!`;

@@ -22,14 +22,26 @@
                 <legend>Opponent</legend>
                 <label for="playerTwo">
                     <input type="radio" name="opponent" id="playerTwo" value="playerTwo" checked>
+                    <svg class="c-form__radio-icon" viewbox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="c-form__radio-circle" cx="10.809" cy="10.809" r="9.461"/>
+                        <polyline class="c-form__radio-tick" points="5 8 10 15 25 0"/>
+                    </svg>
                     <div>Player 2</div>
                 </label>
-                <label for="guesser">
-                    <input type="radio" name="opponent" id="guesser" value="guesser">
-                    <div>Guesser</div>
+                <label for="mrGuesser">
+                    <input type="radio" name="opponent" id="mrGuesser" value="mrGuesser">
+                    <svg class="c-form__radio-icon" viewbox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="c-form__radio-circle" cx="10.809" cy="10.809" r="9.461"/>
+                        <polyline class="c-form__radio-tick" points="5 8 10 15 25 0"/>
+                    </svg>
+                    <div>Mr. Guesser</div>
                 </label>
                 <label for="mrUnbeatable">
                     <input type="radio" name="opponent" id="mrUnbeatable" value="mrUnbeatable">
+                    <svg class="c-form__radio-icon" viewbox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+                        <circle class="c-form__radio-circle" cx="10.809" cy="10.809" r="9.461"/>
+                        <polyline class="c-form__radio-tick" points="5 8 10 15 25 0"/>
+                    </svg>
                     <div>Mr. Unbeatable</div>
                 </label>
             </fieldset>
@@ -37,16 +49,20 @@
                 <div>Player 2:</div>
                 <input type="text">
             </label>
-            <div id="newGameBtn">New Game</div>
+            <div id="newGame" class="btn">New Game</div>
         </form>
         <div id="scoreBoard">
-            <div class="playerOne">Player 1</div>
-            <div class="opponent">Opponent</div>
-            <div class="playerOneScore">0</div>
-            <div class="opponentScore">0</div>
+            <div class="playerOneScoreContainer">
+                <div class="playerOne">Player 1</div>
+                <div class="playerOneScore">0</div>
+            </div>
+            <div id="gameMessage">Player 1, make your move.</div>
+            <div class="opponentScoreContainer">
+                <div class="opponent">Player 2</div>
+                <div class="opponentScore">0</div>
+            </div>
         </div>
-        <div id="gameMessage">Player 1, make your move.</div>
-        <div id="gameRematch">Rematch</div>
+        <div id="gameRematch" class="btn">Rematch</div>
         <div id="gameBoard">
             <div class="gameBoardCell"></div>
             <div class="gameBoardCell"></div>
