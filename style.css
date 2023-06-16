@@ -39,6 +39,7 @@ body {
 #header {
     display: grid;
     background-color: var(--cyan-500);
+    box-shadow: 0 0 12px -4px black;
 }
 
 #header .title {
