@@ -31,7 +31,9 @@ const game = (() => {
     // variables and methods...
 
     let playerOneTurn = true;
-
+    let playerOneScore = 0;
+    let opponentScore = 0;
+    let gameOver = false;
     const gameBoardArr = [];
 
     for (let i = 0; i < 9; i++) {
@@ -39,26 +41,26 @@ const game = (() => {
     }
 
     /* setTimeout(() => events.emit('updateDisplay', gameBoardArr)); */
-    setTimeout(() => gameDisplay.updateDisplay(gameBoardArr));
+    setTimeout(() => gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore));
 
     const markBoard = (index) => {
-        if (gameBoardArr[index].mark === '') {
-            if (playerOneTurn) {
-                gameBoardArr[index].mark = 'x';
-                /* events.emit('updateDisplay', gameBoardArr); */
-                gameDisplay.updateDisplay(gameBoardArr);
-                setTimeout(() => evaluateTurn());
-                /* evaluateTurn(); */
-            } else {
-                gameBoardArr[index].mark = 'o';
-                /* events.emit('updateDisplay', gameBoardArr); */
-                gameDisplay.updateDisplay(gameBoardArr);
-                setTimeout(() => evaluateTurn());
-                /* evaluateTurn(); */
+        if (!gameOver) {
+            if (gameBoardArr[index].mark === '') {
+                if (playerOneTurn) {
+                    gameBoardArr[index].mark = 'x';
+                    /* events.emit('updateDisplay', gameBoardArr); */
+                    gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore);
+                    setTimeout(() => evaluateTurn(), 100);
+                    /* evaluateTurn(); */
+                } else {
+                    gameBoardArr[index].mark = 'o';
+                    /* events.emit('updateDisplay', gameBoardArr); */
+                    gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore);
+                    setTimeout(() => evaluateTurn(), 100);
+                    /* evaluateTurn(); */
+                }
             }
-            
         }
-        
     }
 
     const checkWin = (mark) => {
@@ -96,32 +98,49 @@ const game = (() => {
         return gameBoardArr.every((obj) => obj.mark !== '');
     }
 
-    const clearBoard = () => {
+    const resetGame = () => {
         playerOneTurn = true;
+        gameOver = false;
 
         gameBoardArr.forEach((obj) => {
             obj.mark = '';
             /* events.emit('updateDisplay', gameBoardArr); */
-            gameDisplay.updateDisplay(gameBoardArr);
+            gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore);
         })
+    }
+
+    const setNewGame = () => {
+        playerOneScore = 0;
+        opponentScore = 0;
+
+        resetGame();
     }
     
     const evaluateTurn = () => {
         switch (true) {
             case (checkWin('x')):
                 alert('Player 1 wins!');
-                clearBoard();
+                playerOneScore++;
+                gameOver = true;
+                /* resetGame(); */
+                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore);
                 break;
             case  (checkWin('o')):
                 alert('Player 2 wins!');
-                clearBoard();
+                opponentScore++;
+                gameOver = true;
+                /* resetGame(); */
+                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore);
                 break;
             case (checkFullBoard()):
                 alert(`It's a tie!`);
-                clearBoard();
+                gameOver = true;
+                /* resetGame(); */
+                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore);
                 break;
             default:
                 playerOneTurn = !playerOneTurn;
+                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore);
         }
     }
 
@@ -130,25 +149,51 @@ const game = (() => {
     return {
         // public methods
 
-        markBoard
+        markBoard, resetGame, setNewGame
     };
 })();
 
 const gameDisplay = (() => {
     // variables and methods...
 
-    /* console.log(document.getElementById('gameBoard').children[0]); */
-
-    /* events.on('updateDisplay', (gameBoardArr) => updateDisplay(gameBoardArr)); */
+    document.getElementById('newGameBtn').addEventListener('click', () => game.setNewGame());
+    document.getElementById('gameRematch').addEventListener('click', () => game.resetGame());
     Array.from(document.getElementById('gameBoard').children).forEach((cell) => {
         cell.addEventListener('click', () => game.markBoard(cell.getAttribute('data-index')));
     })
 
-    const updateDisplay = (gameBoardArr) => {
+    const updateDisplay = (gameBoardArr, playerOneTurn, gameOver, playerOneScore, opponentScore) => {
+        updateGameDisplay(gameBoardArr);
+        updateGameMessage(playerOneTurn, gameOver);
+        updateGameScore(playerOneScore, opponentScore);
+    }
+
+    const updateGameDisplay = (gameBoardArr) => {
         for (let i = 0; i < 9; i++) {
             document.getElementById('gameBoard').children[i].setAttribute('data-index', i);
             document.getElementById('gameBoard').children[i].textContent = gameBoardArr[i].mark;
         }
+    }
+
+    const updateGameMessage = (playerOneTurn, gameOver) => {
+        if (!gameOver) {
+            if (playerOneTurn) {
+                document.getElementById('gameMessage').textContent = `Player 1, make your move.`;
+            } else {
+                document.getElementById('gameMessage').textContent = `Player 2, make your move.`;
+            }
+        } else {
+            if (playerOneTurn) {
+                document.getElementById('gameMessage').textContent = `Player 1 wins!`;
+            } else {
+                document.getElementById('gameMessage').textContent = `Player 2 wins!`;
+            }
+        }
+    }
+
+    const updateGameScore = (playerOneScore, opponentScore) => {
+        document.querySelector('.playerOneScore').textContent = playerOneScore;
+        document.querySelector('.opponentScore').textContent = opponentScore;
     }
 
     return {

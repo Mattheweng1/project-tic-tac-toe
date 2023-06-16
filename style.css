@@ -26,7 +26,7 @@ body {
 #content {
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto 1fr;
+    grid-template-rows: auto auto auto auto 1fr;
 }
 
 #gameOptions {
@@ -39,6 +39,7 @@ body {
 
 #newGameBtn {
     grid-column: 1/-1;
+    background-color: orange;
 }
 
 #scoreBoard {
@@ -52,6 +53,12 @@ body {
 #gameMessage {
     align-self: center;
     justify-self: center;
+}
+
+#gameRematch {
+    align-self: center;
+    justify-self: center;
+    background-color: orange;
 }
 
 #gameBoard {
