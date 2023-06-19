@@ -159,6 +159,12 @@ fieldset > label > input:focus + svg > .c-form__radio-circle {
     transition: stroke-dashoffset 0.3s ease-in;
 }
 
+#aiOpponentName {
+    align-self: center;
+    justify-self: center;
+    font-size: 2rem;
+}
+
 #newGame {
     grid-column: 1/-1;
     justify-self: center;

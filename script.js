@@ -40,18 +40,18 @@ const game = (() => {
         gameBoardArr.push({mark: ''});
     }
 
-    setTimeout(() => gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore));
+    setTimeout(() => gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore));
 
     const markBoard = (index) => {
         if (winner === '') {
             if (gameBoardArr[index].mark === '') {
                 if (playerOneTurn) {
                     gameBoardArr[index].mark = 'x';
-                    gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                    gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
                     evaluateTurn();
                 } else {
                     gameBoardArr[index].mark = 'o';
-                    gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                    gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
                     evaluateTurn();
                 }
             }
@@ -99,7 +99,7 @@ const game = (() => {
 
         gameBoardArr.forEach((obj) => {
             obj.mark = '';
-            gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+            gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
         })
     }
 
@@ -115,20 +115,20 @@ const game = (() => {
             case (checkWin('x')):
                 playerOneScore++;
                 winner = 'p1';
-                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
                 break;
             case  (checkWin('o')):
                 opponentScore++;
                 winner = 'p2'
-                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
                 break;
             case (checkFullBoard()):
                 winner = 'tie';
-                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
                 break;
             default:
                 playerOneTurn = !playerOneTurn;
-                gameDisplay.updateDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
         }
     }
 
@@ -150,13 +150,13 @@ const gameDisplay = (() => {
         cell.addEventListener('click', () => game.markBoard(cell.getAttribute('data-index')));
     })
 
-    const updateDisplay = (gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore) => {
-        updateGameDisplay(gameBoardArr);
+    const updateGameDisplay = (gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore) => {
+        updateGameBoard(gameBoardArr);
         updateGameMessage(playerOneTurn, winner);
         updateGameScore(playerOneScore, opponentScore);
     }
 
-    const updateGameDisplay = (gameBoardArr) => {
+    const updateGameBoard = (gameBoardArr) => {
         for (let i = 0; i < 9; i++) {
             document.getElementById('gameBoard').children[i].setAttribute('data-index', i);
             document.getElementById('gameBoard').children[i].textContent = gameBoardArr[i].mark;
@@ -184,16 +184,46 @@ const gameDisplay = (() => {
         document.querySelector('.opponentScore').textContent = opponentScore;
     }
 
+    const radioPlayerTwo = document.querySelector('input#playerTwo');
+    const radioMrGuesser = document.querySelector('input#mrGuesser');
+    const radioMrUnbeatable = document.querySelector('input#mrUnbeatable');
+    const playerTwoName = document.querySelector(`label[for='playerTwoName']`);
+    const aiOpponentName = document.querySelector(`#aiOpponentName`);
+    const radioOpponents = document.querySelectorAll(`input[name='opponent']`);
+
+    const updateOpponent = () => {
+        console.log(radioPlayerTwo.checked);
+        if (radioPlayerTwo.checked) {
+            playerTwoName.style.display = 'grid';
+            aiOpponentName.style.display = 'none';
+        } else {
+            aiOpponentName.style.display = 'grid';
+            playerTwoName.style.display = 'none';
+
+            if (radioMrGuesser.checked) {
+                aiOpponentName.textContent = 'Mr. Guesser';
+            } else if (radioMrUnbeatable.checked) {
+                aiOpponentName.textContent = 'Mr. Unbeatable';
+            }
+        }
+    }
+
+    for (const radioOpponent of radioOpponents) {
+        radioOpponent.addEventListener('change', updateOpponent);
+    }
+
     return {
         // public methods
 
-        updateDisplay
+        updateGameDisplay
     };
 })();
 
-const Player = () => {
+const Player = (name) => {
 
     const setName = (name) => this.name = name;
+
+    console.log(this);
 
     return {
         // public methods
@@ -202,8 +232,10 @@ const Player = () => {
     };
 };
 
-const playerOne = Player();
+const playerOne = Player('p1');
 playerOne.setName('Player 1');
+console.log(playerOne.name);
 
-const playerTwo = Player();
+const playerTwo = Player('p2');
 playerTwo.setName('Player 2');
+console.log(playerTwo);
