@@ -144,7 +144,6 @@ const game = (() => {
 const gameDisplay = (() => {
     // variables and methods...
 
-    document.getElementById('newGame').addEventListener('click', () => game.setNewGame());
     document.getElementById('gameRematch').addEventListener('click', () => game.resetGame());
     Array.from(document.getElementById('gameBoard').children).forEach((cell) => {
         cell.addEventListener('click', () => game.markBoard(cell.getAttribute('data-index')));
@@ -166,14 +165,14 @@ const gameDisplay = (() => {
     const updateGameMessage = (playerOneTurn, winner) => {
         if (winner === '') {
             if (playerOneTurn) {
-                document.getElementById('gameMessage').textContent = `Player 1's turn.`;
+                document.getElementById('gameMessage').textContent = `${players.playerOne.getName()}'s turn.`;
             } else {
-                document.getElementById('gameMessage').textContent = `Player 2's turn.`;
+                document.getElementById('gameMessage').textContent = `${opponentScoreBoardName.textContent}'s turn.`;
             }
         } else if (winner === 'p1') {
-            document.getElementById('gameMessage').textContent = `Player 1 wins!`;
+            document.getElementById('gameMessage').textContent = `${players.playerOne.getName()} wins!`;
         } else if (winner === 'p2') {
-            document.getElementById('gameMessage').textContent = `Player 2 wins!`;
+            document.getElementById('gameMessage').textContent = `${opponentScoreBoardName.textContent} wins!`;
         } else if (winner === 'tie') {
             document.getElementById('gameMessage').textContent = `It's a tie!`;
         }
@@ -192,7 +191,6 @@ const gameDisplay = (() => {
     const radioOpponents = document.querySelectorAll(`input[name='opponent']`);
 
     const updateOpponent = () => {
-        console.log(radioPlayerTwo.checked);
         if (radioPlayerTwo.checked) {
             playerTwoName.style.display = 'grid';
             aiOpponentName.style.display = 'none';
@@ -212,6 +210,31 @@ const gameDisplay = (() => {
         radioOpponent.addEventListener('change', updateOpponent);
     }
 
+    const playerOneNameField = document.getElementById('playerOneName');
+    const playerTwoNameField = document.getElementById('playerTwoName');
+    const playerOneScoreBoardName = document.querySelector('.playerOne');
+    const opponentScoreBoardName = document.querySelector('.opponent');
+
+    const updatePlayerNames = () => {
+        players.playerOne.setName(playerOneNameField.value ? playerOneNameField.value : 'Player 1');
+        players.playerTwo.setName(playerTwoNameField.value ? playerTwoNameField.value : 'Player 2');
+
+        playerOneScoreBoardName.textContent = players.playerOne.getName();
+        
+        if (radioPlayerTwo.checked) {
+            opponentScoreBoardName.textContent = players.playerTwo.getName();
+        } else if (radioMrGuesser.checked) {
+            opponentScoreBoardName.textContent = players.mrGuesser.getName();
+        } else if (radioMrUnbeatable.checked) {
+            opponentScoreBoardName.textContent = players.mrUnbeatable.getName();
+        }
+    };
+
+    document.getElementById('newGame').addEventListener('click', () => {
+        updatePlayerNames();
+        game.setNewGame();
+    });
+
     return {
         // public methods
 
@@ -219,23 +242,31 @@ const gameDisplay = (() => {
     };
 })();
 
-const Player = (name) => {
+const players = (() => {
 
-    const setName = (name) => this.name = name;
-
-    console.log(this);
-
-    return {
-        // public methods
-        
-        setName
+    const player = (playerName) => {
+        return {
+            getName() {
+                return playerName;
+            },
+            setName(newName) {
+                playerName = newName;
+            }
+        }
     };
-};
 
-const playerOne = Player('p1');
-playerOne.setName('Player 1');
-console.log(playerOne.name);
+    const playerOne = player('Player 1');
 
-const playerTwo = Player('p2');
-playerTwo.setName('Player 2');
-console.log(playerTwo);
+    const playerTwo = player('Player 2');
+
+    const mrGuesser = Object.assign({}, player('Mr. Guesser'));
+
+    const mrUnbeatable = Object.assign({}, player('Mr. Unbeatable'));
+    
+    return {
+        playerOne,
+        playerTwo,
+        mrGuesser,
+        mrUnbeatable
+    };
+})();
