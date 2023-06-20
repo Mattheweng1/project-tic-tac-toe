@@ -49,10 +49,12 @@ const game = (() => {
                     gameBoardArr[index].mark = 'x';
                     gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
                     evaluateTurn();
+                    gameDisplay.popText('#gameMessage');
                 } else {
                     gameBoardArr[index].mark = 'o';
                     gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
                     evaluateTurn();
+                    gameDisplay.popText('#gameMessage');
                 }
             }
         }
@@ -101,6 +103,8 @@ const game = (() => {
             obj.mark = '';
             gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
         })
+
+        gameDisplay.popText('#gameMessage');
     }
 
     const setNewGame = () => {
@@ -108,6 +112,9 @@ const game = (() => {
         opponentScore = 0;
 
         resetGame();
+
+        gameDisplay.popText('.playerOneScore');
+        gameDisplay.popText('.opponentScore');
     }
     
     const evaluateTurn = () => {
@@ -116,15 +123,19 @@ const game = (() => {
                 playerOneScore++;
                 winner = 'p1';
                 gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameDisplay.popText('.playerOneScore');
                 break;
             case  (checkWin('o')):
                 opponentScore++;
                 winner = 'p2'
                 gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameDisplay.popText('.opponentScore');
                 break;
             case (checkFullBoard()):
                 winner = 'tie';
                 gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameDisplay.popText('.playerOneScore');
+                gameDisplay.popText('.opponentScore');
                 break;
             default:
                 playerOneTurn = !playerOneTurn;
@@ -170,17 +181,24 @@ const gameDisplay = (() => {
                 document.getElementById('gameMessage').textContent = `${opponentScoreBoardName.textContent}'s turn.`;
             }
         } else if (winner === 'p1') {
-            document.getElementById('gameMessage').textContent = `${players.playerOne.getName()} wins!`;
+            document.getElementById('gameMessage').textContent = `${players.playerOne.getName()} WINS!`;
         } else if (winner === 'p2') {
-            document.getElementById('gameMessage').textContent = `${opponentScoreBoardName.textContent} wins!`;
+            document.getElementById('gameMessage').textContent = `${opponentScoreBoardName.textContent} WINS!`;
         } else if (winner === 'tie') {
-            document.getElementById('gameMessage').textContent = `It's a tie!`;
+            document.getElementById('gameMessage').textContent = `It's a TIE!`;
         }
     }
 
     const updateGameScore = (playerOneScore, opponentScore) => {
         document.querySelector('.playerOneScore').textContent = playerOneScore;
         document.querySelector('.opponentScore').textContent = opponentScore;
+    }
+
+    const popText = (querySelector) => {
+        document.querySelector(querySelector).classList.add('scaled');
+        setTimeout(() => {
+            document.querySelector(querySelector).classList.remove('scaled');
+        }, 400);
     }
 
     const radioPlayerTwo = document.querySelector('input#playerTwo');
@@ -238,7 +256,8 @@ const gameDisplay = (() => {
     return {
         // public methods
 
-        updateGameDisplay
+        updateGameDisplay,
+        popText
     };
 })();
 
