@@ -153,8 +153,8 @@ fieldset > label > input:focus + svg > .c-form__radio-circle {
 .c-form__radio-tick {
     fill: none;
     stroke: var(--orange-700);
-    stroke-dasharray: 33; /* this is the length of the line */
-    stroke-dashoffset: 33; /* this is the length of the line */
+    stroke-dasharray: 33;
+    stroke-dashoffset: 33;
     stroke-width: 2;
     transition: stroke-dashoffset 0.3s ease-in;
 }
@@ -283,4 +283,16 @@ fieldset > label > input:focus + svg > .c-form__radio-circle {
     align-content: center;
     justify-content: center;
     background-color: white;
+}
+
+.xSVG,
+.oSVG {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    transition: stroke-dashoffset 0.3s ease-in;
+}
+
+.xSVG.drawn,
+.oSVG.drawn {
+    stroke-dashoffset: 0;
 }
