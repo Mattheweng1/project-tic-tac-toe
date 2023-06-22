@@ -276,6 +276,7 @@ fieldset > label > input:focus + svg > .c-form__radio-circle {
     background-color: var(--cyan-700);
     color: var(--orange-700);
     font-size: 14vh;
+    position: relative;
 }
 
 .gameBoardCell {
@@ -294,5 +295,45 @@ fieldset > label > input:focus + svg > .c-form__radio-circle {
 
 .xSVG.drawn,
 .oSVG.drawn {
+    stroke-dashoffset: 0;
+}
+
+#strikeBox {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.strikeSVG {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+    opacity: 75%;
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    transition: stroke-dashoffset 0.5s ease-in;
+}
+
+.strikeSVG path {
+    stroke: var(--orange-500);
+}
+
+.strikeSVG.drawn {
+    stroke-dashoffset: 0;
+}
+
+#tieStrikeSVG {
+    stroke-dasharray: 5000;
+    stroke-dashoffset: 5000;
+    transition: stroke-dashoffset 0.9s ease-in;
+}
+
+#tieStrikeSVG.drawn {
     stroke-dashoffset: 0;
 }

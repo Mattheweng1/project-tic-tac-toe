@@ -67,38 +67,56 @@ const game = (() => {
     }
 
     const checkWin = (mark) => {
-        switch (true) {
-            case ([gameBoardArr[0], gameBoardArr[3], gameBoardArr[6]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            case ([gameBoardArr[1], gameBoardArr[4], gameBoardArr[7]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            case ([gameBoardArr[2], gameBoardArr[5], gameBoardArr[8]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            case ([gameBoardArr[0], gameBoardArr[1], gameBoardArr[2]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            case ([gameBoardArr[3], gameBoardArr[4], gameBoardArr[5]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            case ([gameBoardArr[6], gameBoardArr[7], gameBoardArr[8]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            case ([gameBoardArr[0], gameBoardArr[4], gameBoardArr[8]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            case ([gameBoardArr[2], gameBoardArr[4], gameBoardArr[6]].every((obj) => obj.mark === mark)):
-                return true;
-                break;
-            default:
-                return false;
+        let result = false;
+        
+        if ([gameBoardArr[0], gameBoardArr[4], gameBoardArr[8]].every((obj) => obj.mark === mark)) {
+            document.getElementById('0to8strikeSVG').classList.add('drawn');
+            result = true;
         }
+            
+        if ([gameBoardArr[2], gameBoardArr[4], gameBoardArr[6]].every((obj) => obj.mark === mark)) {
+            document.getElementById('2to6strikeSVG').classList.add('drawn');
+            result = true;
+        }
+            
+        if ([gameBoardArr[0], gameBoardArr[1], gameBoardArr[2]].every((obj) => obj.mark === mark)) {
+            document.getElementById('0to2strikeSVG').classList.add('drawn');
+            result = true;
+        }
+            
+        if ([gameBoardArr[3], gameBoardArr[4], gameBoardArr[5]].every((obj) => obj.mark === mark)) {
+            document.getElementById('3to5strikeSVG').classList.add('drawn');
+            result = true;
+        }
+            
+        if ([gameBoardArr[6], gameBoardArr[7], gameBoardArr[8]].every((obj) => obj.mark === mark)) {
+            document.getElementById('6to8strikeSVG').classList.add('drawn');
+            result = true;
+        }
+            
+        if ([gameBoardArr[0], gameBoardArr[3], gameBoardArr[6]].every((obj) => obj.mark === mark)) {
+            document.getElementById('0to6strikeSVG').classList.add('drawn');
+            result = true;
+        }
+            
+        if ([gameBoardArr[1], gameBoardArr[4], gameBoardArr[7]].every((obj) => obj.mark === mark)) {
+            document.getElementById('1to7strikeSVG').classList.add('drawn');
+            result = true;
+        }
+            
+        if ([gameBoardArr[2], gameBoardArr[5], gameBoardArr[8]].every((obj) => obj.mark === mark)) {
+            document.getElementById('2to8strikeSVG').classList.add('drawn');
+            result = true;
+        }
+            
+        return result;
     }
 
     const checkFullBoard = () => {
-        return gameBoardArr.every((obj) => obj.mark !== '');
+        if (gameBoardArr.every((obj) => obj.mark !== '')) {
+            document.getElementById('tieStrikeSVG').classList.add('drawn');
+            return true;
+        }
     }
 
     const resetGame = () => {
@@ -111,6 +129,9 @@ const game = (() => {
         })
 
         gameDisplay.popText('#gameMessage');
+        Array.from(document.querySelectorAll('.strikeSVG')).forEach((svg) => {
+            svg.classList.remove('drawn');
+        })
     }
 
     const setNewGame = () => {
@@ -162,9 +183,6 @@ const gameDisplay = (() => {
     // variables and methods...
 
     document.getElementById('gameRematch').addEventListener('click', () => game.resetGame());
-    Array.from(document.getElementById('gameBoard').children).forEach((cell) => {
-        cell.addEventListener('click', () => game.markBoard(cell.getAttribute('data-index')));
-    })
 
     const updateGameDisplay = (gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore) => {
         updateGameBoard(gameBoardArr);
@@ -175,11 +193,10 @@ const gameDisplay = (() => {
     const updateGameBoard = (gameBoardArr) => {
         for (let i = 0; i < 9; i++) {
             document.getElementById('gameBoard').children[i].setAttribute('data-index', i);
+            document.getElementById('gameBoard').children[i].addEventListener('click', () => game.markBoard(i));
 
             const xSVGhtml = `<svg class="xSVG" width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-                    <title>x-drawn</title>
                     <g>
-                        <title>Layer 1</title>
                         <g stroke="null" id="svg_16">
                             <path stroke="#c2410c" d="m164,168.2896c10.47534,9.66516 27.80036,21.48288 54.99552,48.32579c27.9348,27.57299 47.00964,53.25677 77.25561,86.98642c26.07713,29.08068 58.92377,57.99095 95.58744,84.57013l30.11659,16.91403l23.56951,6.04072l10.47534,0" id="svg_9" fill-opacity="0" stroke-width="40" fill="none"/>
                             <path stroke="#c2410c" d="m165.30942,421.99999c1.30942,-1.20814 8.82576,-9.95517 20.95067,-21.74661c21.66722,-21.0713 55.98643,-46.19399 86.42152,-74.90497c29.80892,-28.1203 62.85202,-68.86425 90.34978,-105.10859l18.33184,-26.57918l18.33184,-27.78733l6.54709,-10.8733" id="svg_15" fill-opacity="0" stroke-width="40" fill="none"/>
@@ -188,9 +205,7 @@ const gameDisplay = (() => {
                 </svg>`;
 
             const oSVGhtml = `<svg class="oSVG" width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-                    <title>circle-drawn</title>
                     <g>
-                        <title>Layer 1</title>
                         <path stroke="#c2410c" fill-opacity="0" stroke-width="40" d="m298.01103,165.50389c-9.04095,0 -22.93433,-3.01461 -49.72522,3.28062c-23.72574,5.57499 -45.11731,15.68454 -65.86977,34.4465c-18.65972,16.86995 -31.58917,36.2881 -38.10114,59.05115c-7.65504,26.75873 -7.25125,52.14125 2.58313,80.37517c11.24604,32.28674 26.63039,57.36771 57.4746,78.73486c29.79474,20.64013 66.43254,26.16972 105.26248,28.70542c32.89776,2.1483 68.59292,-3.33408 88.47214,-19.68372c21.93121,-18.0373 36.32784,-47.61874 41.33005,-74.63409c5.66589,-30.59982 5.4491,-67.12352 -1.29156,-95.95812c-7.33812,-31.39038 -22.99487,-61.94558 -47.14209,-82.01548c-22.23342,-18.47926 -52.95413,-26.24495 -84.59745,-31.16588l-32.93488,-1.64031l-8.39517,0" id="svg_15" fill="#000000"/>
                     </g>
                 </svg>`;
