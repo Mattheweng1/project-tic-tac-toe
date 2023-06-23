@@ -30,32 +30,41 @@ var events = {
 const game = (() => {
     // variables and methods...
 
-    let playerOneTurn = true;
-    let playerOneScore = 0;
-    let opponentScore = 0;
-    let winner = '';
-    const gameBoardArr = [];
+    const gameData = {};
+
+    gameData.playerOneTurn = true;
+    setTimeout(() => {
+        gameData.opponent = players.mrGuesser;
+    });
+    gameData.playerOneScore = 0;
+    gameData.opponentScore = 0;
+    gameData.winner = '';
+    gameData.gameBoardArr = [];
 
     for (let i = 0; i < 9; i++) {
-        gameBoardArr.push({mark: ''});
+        gameData.gameBoardArr.push({mark: ''});
     }
 
-    setTimeout(() => gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore));
+    setTimeout(() => gameDisplay.updateGameDisplay(gameData));
 
     const markBoard = (index) => {
-        if (winner === '') {
-            if (gameBoardArr[index].mark === '') {
-                if (playerOneTurn) {
-                    gameBoardArr[index].mark = 'x';
-                    gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+        if (gameData.winner === '') {
+            if (gameData.gameBoardArr[index].mark === '') {
+                if (gameData.playerOneTurn) {
+                    gameData.gameBoardArr[index].mark = 'x';
+                    gameDisplay.updateGameDisplay(gameData);
                     setTimeout(() => {
                         document.getElementById('gameBoard').children[index].querySelector('.xSVG').classList.add('drawn');
                     });
                     evaluateTurn();
                     gameDisplay.popText('#gameMessage');
+
+                    if (gameData.opponent === players.mrGuesser) {
+                        players.mrGuesser.playMove(gameData, evaluateTurn);
+                    }
                 } else {
-                    gameBoardArr[index].mark = 'o';
-                    gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                    gameData.gameBoardArr[index].mark = 'o';
+                    gameDisplay.updateGameDisplay(gameData);
                     setTimeout(() => {
                         document.getElementById('gameBoard').children[index].querySelector('.oSVG').classList.add('drawn');
                     });
@@ -69,42 +78,42 @@ const game = (() => {
     const checkWin = (mark) => {
         let result = false;
         
-        if ([gameBoardArr[0], gameBoardArr[4], gameBoardArr[8]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[0], gameData.gameBoardArr[4], gameData.gameBoardArr[8]].every((obj) => obj.mark === mark)) {
             document.getElementById('0to8strikeSVG').classList.add('drawn');
             result = true;
         }
             
-        if ([gameBoardArr[2], gameBoardArr[4], gameBoardArr[6]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[2], gameData.gameBoardArr[4], gameData.gameBoardArr[6]].every((obj) => obj.mark === mark)) {
             document.getElementById('2to6strikeSVG').classList.add('drawn');
             result = true;
         }
             
-        if ([gameBoardArr[0], gameBoardArr[1], gameBoardArr[2]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[0], gameData.gameBoardArr[1], gameData.gameBoardArr[2]].every((obj) => obj.mark === mark)) {
             document.getElementById('0to2strikeSVG').classList.add('drawn');
             result = true;
         }
             
-        if ([gameBoardArr[3], gameBoardArr[4], gameBoardArr[5]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[3], gameData.gameBoardArr[4], gameData.gameBoardArr[5]].every((obj) => obj.mark === mark)) {
             document.getElementById('3to5strikeSVG').classList.add('drawn');
             result = true;
         }
             
-        if ([gameBoardArr[6], gameBoardArr[7], gameBoardArr[8]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[6], gameData.gameBoardArr[7], gameData.gameBoardArr[8]].every((obj) => obj.mark === mark)) {
             document.getElementById('6to8strikeSVG').classList.add('drawn');
             result = true;
         }
             
-        if ([gameBoardArr[0], gameBoardArr[3], gameBoardArr[6]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[0], gameData.gameBoardArr[3], gameData.gameBoardArr[6]].every((obj) => obj.mark === mark)) {
             document.getElementById('0to6strikeSVG').classList.add('drawn');
             result = true;
         }
             
-        if ([gameBoardArr[1], gameBoardArr[4], gameBoardArr[7]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[1], gameData.gameBoardArr[4], gameData.gameBoardArr[7]].every((obj) => obj.mark === mark)) {
             document.getElementById('1to7strikeSVG').classList.add('drawn');
             result = true;
         }
             
-        if ([gameBoardArr[2], gameBoardArr[5], gameBoardArr[8]].every((obj) => obj.mark === mark)) {
+        if ([gameData.gameBoardArr[2], gameData.gameBoardArr[5], gameData.gameBoardArr[8]].every((obj) => obj.mark === mark)) {
             document.getElementById('2to8strikeSVG').classList.add('drawn');
             result = true;
         }
@@ -113,19 +122,19 @@ const game = (() => {
     }
 
     const checkFullBoard = () => {
-        if (gameBoardArr.every((obj) => obj.mark !== '')) {
+        if (gameData.gameBoardArr.every((obj) => obj.mark !== '')) {
             document.getElementById('tieStrikeSVG').classList.add('drawn');
             return true;
         }
     }
 
     const resetGame = () => {
-        playerOneTurn = true;
-        winner = '';
+        gameData.playerOneTurn = true;
+        gameData.winner = '';
 
-        gameBoardArr.forEach((obj) => {
+        gameData.gameBoardArr.forEach((obj) => {
             obj.mark = '';
-            gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+            gameDisplay.updateGameDisplay(gameData);
         })
 
         gameDisplay.popText('#gameMessage');
@@ -135,10 +144,12 @@ const game = (() => {
     }
 
     const setNewGame = () => {
-        playerOneScore = 0;
-        opponentScore = 0;
+        gameData.playerOneScore = 0;
+        gameData.opponentScore = 0;
 
         resetGame();
+
+        gameDisplay.updateOpponent(gameData);
 
         gameDisplay.popText('.playerOneScore');
         gameDisplay.popText('.opponentScore');
@@ -147,26 +158,26 @@ const game = (() => {
     const evaluateTurn = () => {
         switch (true) {
             case (checkWin('x')):
-                playerOneScore++;
-                winner = 'p1';
-                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameData.playerOneScore++;
+                gameData.winner = 'p1';
+                gameDisplay.updateGameDisplay(gameData);
                 gameDisplay.popText('.playerOneScore');
                 break;
             case  (checkWin('o')):
-                opponentScore++;
-                winner = 'p2'
-                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameData.opponentScore++;
+                gameData.winner = 'p2'
+                gameDisplay.updateGameDisplay(gameData);
                 gameDisplay.popText('.opponentScore');
                 break;
             case (checkFullBoard()):
-                winner = 'tie';
-                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameData.winner = 'tie';
+                gameDisplay.updateGameDisplay(gameData);
                 gameDisplay.popText('.playerOneScore');
                 gameDisplay.popText('.opponentScore');
                 break;
             default:
-                playerOneTurn = !playerOneTurn;
-                gameDisplay.updateGameDisplay(gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore);
+                gameData.playerOneTurn = !gameData.playerOneTurn;
+                gameDisplay.updateGameDisplay(gameData);
         }
     }
 
@@ -175,7 +186,7 @@ const game = (() => {
     return {
         // public methods
 
-        markBoard, resetGame, setNewGame
+        markBoard, resetGame, setNewGame,
     };
 })();
 
@@ -184,13 +195,13 @@ const gameDisplay = (() => {
 
     document.getElementById('gameRematch').addEventListener('click', () => game.resetGame());
 
-    const updateGameDisplay = (gameBoardArr, playerOneTurn, winner, playerOneScore, opponentScore) => {
-        updateGameBoard(gameBoardArr);
-        updateGameMessage(playerOneTurn, winner);
-        updateGameScore(playerOneScore, opponentScore);
+    const updateGameDisplay = (gameData) => {
+        updateGameBoard(gameData);
+        updateGameMessage(gameData);
+        updateGameScore(gameData);
     }
 
-    const updateGameBoard = (gameBoardArr) => {
+    const updateGameBoard = (gameData) => {
         for (let i = 0; i < 9; i++) {
             document.getElementById('gameBoard').children[i].setAttribute('data-index', i);
             document.getElementById('gameBoard').children[i].addEventListener('click', () => game.markBoard(i));
@@ -211,36 +222,36 @@ const gameDisplay = (() => {
                 </svg>`;
 
             if (document.getElementById('gameBoard').children[i].innerHTML === '') {
-                if (gameBoardArr[i].mark === 'x') {
+                if (gameData.gameBoardArr[i].mark === 'x') {
                 document.getElementById('gameBoard').children[i].innerHTML = xSVGhtml;
-                } else if (gameBoardArr[i].mark === 'o') {
+                } else if (gameData.gameBoardArr[i].mark === 'o') {
                     document.getElementById('gameBoard').children[i].innerHTML = oSVGhtml;
                 }
-            } else if (gameBoardArr[i].mark === '') {
+            } else if (gameData.gameBoardArr[i].mark === '') {
                 document.getElementById('gameBoard').children[i].innerHTML = '';
             }
         }
     }
 
-    const updateGameMessage = (playerOneTurn, winner) => {
-        if (winner === '') {
-            if (playerOneTurn) {
+    const updateGameMessage = (gameData) => {
+        if (gameData.winner === '') {
+            if (gameData.playerOneTurn) {
                 document.getElementById('gameMessage').textContent = `${players.playerOne.getName()}'s turn.`;
             } else {
                 document.getElementById('gameMessage').textContent = `${opponentScoreBoardName.textContent}'s turn.`;
             }
-        } else if (winner === 'p1') {
+        } else if (gameData.winner === 'p1') {
             document.getElementById('gameMessage').textContent = `${players.playerOne.getName()} WINS!`;
-        } else if (winner === 'p2') {
+        } else if (gameData.winner === 'p2') {
             document.getElementById('gameMessage').textContent = `${opponentScoreBoardName.textContent} WINS!`;
-        } else if (winner === 'tie') {
+        } else if (gameData.winner === 'tie') {
             document.getElementById('gameMessage').textContent = `It's a TIE!`;
         }
     }
 
-    const updateGameScore = (playerOneScore, opponentScore) => {
-        document.querySelector('.playerOneScore').textContent = playerOneScore;
-        document.querySelector('.opponentScore').textContent = opponentScore;
+    const updateGameScore = (gameData) => {
+        document.querySelector('.playerOneScore').textContent = gameData.playerOneScore;
+        document.querySelector('.opponentScore').textContent = gameData.opponentScore;
     }
 
     const popText = (querySelector) => {
@@ -257,7 +268,7 @@ const gameDisplay = (() => {
     const aiOpponentName = document.querySelector(`#aiOpponentName`);
     const radioOpponents = document.querySelectorAll(`input[name='opponent']`);
 
-    const updateOpponent = () => {
+    const updateOpponentChecked = () => {
         if (radioPlayerTwo.checked) {
             playerTwoName.style.display = 'grid';
             aiOpponentName.style.display = 'none';
@@ -266,16 +277,30 @@ const gameDisplay = (() => {
             playerTwoName.style.display = 'none';
 
             if (radioMrGuesser.checked) {
-                aiOpponentName.textContent = 'Mr. Guesser';
+                aiOpponentName.textContent = players.mrGuesser.getName();
             } else if (radioMrUnbeatable.checked) {
-                aiOpponentName.textContent = 'Mr. Unbeatable';
+                aiOpponentName.textContent = players.mrUnbeatable.getName();
             }
         }
-    }
+    };
 
     for (const radioOpponent of radioOpponents) {
-        radioOpponent.addEventListener('change', updateOpponent);
+        radioOpponent.addEventListener('change', updateOpponentChecked);
     }
+
+    const updateOpponent = (gameData) => {
+        switch (true) {
+            case (radioPlayerTwo.checked):
+                gameData.opponent = players.playerTwo;
+                break;
+            case (radioMrGuesser.checked):
+                gameData.opponent = players.mrGuesser;
+                break;
+            case (radioMrUnbeatable.checked):
+                gameData.opponent = players.mrUnbeatable;
+                break;
+        }
+    };
 
     const playerOneNameField = document.getElementById('playerOneName');
     const playerTwoNameField = document.getElementById('playerTwoName');
@@ -306,6 +331,7 @@ const gameDisplay = (() => {
         // public methods
 
         updateGameDisplay,
+        updateOpponent,
         popText
     };
 })();
@@ -323,11 +349,39 @@ const players = (() => {
         }
     };
 
+    const guesser = () => {
+        return {
+            playMove(gameData, evaluateTurn) {
+                if (gameData.winner === '') {
+                    const possibleMoves = [];
+
+                    for (let i = 0; i < 9; i++) {
+                        if (gameData.gameBoardArr[i].mark === '') {
+                            possibleMoves.push(i);
+                        }
+                    }
+
+                    const randomMoveIndex = (() => {
+                        return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                    })();
+                    
+                    gameData.gameBoardArr[randomMoveIndex].mark = 'o';
+                    gameDisplay.updateGameDisplay(gameData);
+                    setTimeout(() => {
+                        document.getElementById('gameBoard').children[randomMoveIndex].querySelector('.oSVG').classList.add('drawn');
+                    });
+                    evaluateTurn();
+                    gameDisplay.popText('#gameMessage');
+                }
+            }
+        }
+    };
+
     const playerOne = player('Player 1');
 
     const playerTwo = player('Player 2');
 
-    const mrGuesser = Object.assign({}, player('Mr. Guesser'));
+    const mrGuesser = Object.assign({}, player('Mr. Guesser'), guesser());
 
     const mrUnbeatable = Object.assign({}, player('Mr. Unbeatable'));
     
