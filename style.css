@@ -257,11 +257,24 @@ fieldset > label > input:focus + svg > .c-form__radio-circle {
     transform: scale(2);
 }
 
-#gameRematch {
+#rematchContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-weight: bold;
+    font-size: 1.25rem;
     align-self: center;
     justify-self: center;
-    font-weight: bold;
-    font-size: 1rem;
+    gap: 32px;
+}
+
+#rematchContainer > div {
+    align-self: center;
+    justify-self: center;
+}
+
+#gameRematch {
+    font-size: 2rem;
+    color: var(--cyan-700);
 }
 
 #gameBoard {

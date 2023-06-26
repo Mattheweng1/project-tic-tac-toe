@@ -6,6 +6,7 @@ const game = (() => {
     const gameData = {};
 
     gameData.playerOneTurn = true;
+    gameData.playerOneStarts = true;
     setTimeout(() => {
         gameData.opponent = players.playerTwo;
     });
@@ -121,26 +122,44 @@ const game = (() => {
         }
     }
 
-    const resetGame = () => {
-        gameData.playerOneTurn = true;
+    const resetGame = (playerOneStarts) => {
+        gameData.playerOneStarts = playerOneStarts;
+
         gameData.winner = '';
+
+        Array.from(document.querySelectorAll('.strikeSVG')).forEach((svg) => {
+            svg.classList.remove('drawn');
+        });
 
         for (let i = 0; i < 9; i++) {
             gameData.gameBoardArr[i] = '';
         }
 
-        gameDisplay.updateGameDisplay(gameData);
-        gameDisplay.popText('#gameMessage');
-        Array.from(document.querySelectorAll('.strikeSVG')).forEach((svg) => {
-            svg.classList.remove('drawn');
-        })
+        if (playerOneStarts) {
+            gameData.playerOneTurn = true;
+
+            gameDisplay.updateGameDisplay(gameData);
+            gameDisplay.popText('#gameMessage');
+        } else {
+            gameData.playerOneTurn = false;
+
+            gameDisplay.updateGameDisplay(gameData);
+            gameDisplay.popText('#gameMessage');
+
+            if (gameData.opponent === players.mrGuesser) {
+                players.mrGuesser.playMove(gameData);
+            } else if (gameData.opponent === players.mrUnbeatable) {
+                // mrUnbeatable would play randomly for the first move anyway, so mrGuesser's method is like a shortcut.
+                players.mrGuesser.playMove(gameData);
+            }
+        }
     }
 
     const setNewGame = () => {
         gameData.playerOneScore = 0;
         gameData.opponentScore = 0;
 
-        resetGame();
+        resetGame(true);
 
         gameDisplay.updateOpponent(gameData);
 
@@ -186,7 +205,12 @@ const game = (() => {
 const gameDisplay = (() => {
     // variables and methods...
 
-    document.getElementById('gameRematch').addEventListener('click', () => game.resetGame());
+    document.getElementById('playerOneStarts').addEventListener('click', () => {
+        game.resetGame(true);
+    });
+    document.getElementById('opponentStarts').addEventListener('click', () => {
+        game.resetGame(false);
+    });
 
     const updateGameDisplay = (gameData) => {
         updateGameBoard(gameData);
@@ -195,28 +219,28 @@ const gameDisplay = (() => {
     }
 
     const updateGameBoard = (gameData) => {
+        const xSVGhtml = `<svg class="xSVG" width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <g stroke="null" id="svg_16">
+                        <path stroke="#c2410c" d="m164,168.2896c10.47534,9.66516 27.80036,21.48288 54.99552,48.32579c27.9348,27.57299 47.00964,53.25677 77.25561,86.98642c26.07713,29.08068 58.92377,57.99095 95.58744,84.57013l30.11659,16.91403l23.56951,6.04072l10.47534,0" id="svg_9" fill-opacity="0" stroke-width="40" fill="none"/>
+                        <path stroke="#c2410c" d="m165.30942,421.99999c1.30942,-1.20814 8.82576,-9.95517 20.95067,-21.74661c21.66722,-21.0713 55.98643,-46.19399 86.42152,-74.90497c29.80892,-28.1203 62.85202,-68.86425 90.34978,-105.10859l18.33184,-26.57918l18.33184,-27.78733l6.54709,-10.8733" id="svg_15" fill-opacity="0" stroke-width="40" fill="none"/>
+                    </g>
+                </g>
+            </svg>`;
+
+        const oSVGhtml = `<svg class="oSVG" width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <path stroke="#c2410c" fill-opacity="0" stroke-width="40" d="m298.01103,165.50389c-9.04095,0 -22.93433,-3.01461 -49.72522,3.28062c-23.72574,5.57499 -45.11731,15.68454 -65.86977,34.4465c-18.65972,16.86995 -31.58917,36.2881 -38.10114,59.05115c-7.65504,26.75873 -7.25125,52.14125 2.58313,80.37517c11.24604,32.28674 26.63039,57.36771 57.4746,78.73486c29.79474,20.64013 66.43254,26.16972 105.26248,28.70542c32.89776,2.1483 68.59292,-3.33408 88.47214,-19.68372c21.93121,-18.0373 36.32784,-47.61874 41.33005,-74.63409c5.66589,-30.59982 5.4491,-67.12352 -1.29156,-95.95812c-7.33812,-31.39038 -22.99487,-61.94558 -47.14209,-82.01548c-22.23342,-18.47926 -52.95413,-26.24495 -84.59745,-31.16588l-32.93488,-1.64031l-8.39517,0" id="svg_15" fill="#000000"/>
+                </g>
+            </svg>`;
+
         for (let i = 0; i < 9; i++) {
             document.getElementById('gameBoard').children[i].setAttribute('data-index', i);
             document.getElementById('gameBoard').children[i].addEventListener('click', () => game.markBoard(i));
 
-            const xSVGhtml = `<svg class="xSVG" width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                        <g stroke="null" id="svg_16">
-                            <path stroke="#c2410c" d="m164,168.2896c10.47534,9.66516 27.80036,21.48288 54.99552,48.32579c27.9348,27.57299 47.00964,53.25677 77.25561,86.98642c26.07713,29.08068 58.92377,57.99095 95.58744,84.57013l30.11659,16.91403l23.56951,6.04072l10.47534,0" id="svg_9" fill-opacity="0" stroke-width="40" fill="none"/>
-                            <path stroke="#c2410c" d="m165.30942,421.99999c1.30942,-1.20814 8.82576,-9.95517 20.95067,-21.74661c21.66722,-21.0713 55.98643,-46.19399 86.42152,-74.90497c29.80892,-28.1203 62.85202,-68.86425 90.34978,-105.10859l18.33184,-26.57918l18.33184,-27.78733l6.54709,-10.8733" id="svg_15" fill-opacity="0" stroke-width="40" fill="none"/>
-                        </g>
-                    </g>
-                </svg>`;
-
-            const oSVGhtml = `<svg class="oSVG" width="100%" height="100%" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
-                    <g>
-                        <path stroke="#c2410c" fill-opacity="0" stroke-width="40" d="m298.01103,165.50389c-9.04095,0 -22.93433,-3.01461 -49.72522,3.28062c-23.72574,5.57499 -45.11731,15.68454 -65.86977,34.4465c-18.65972,16.86995 -31.58917,36.2881 -38.10114,59.05115c-7.65504,26.75873 -7.25125,52.14125 2.58313,80.37517c11.24604,32.28674 26.63039,57.36771 57.4746,78.73486c29.79474,20.64013 66.43254,26.16972 105.26248,28.70542c32.89776,2.1483 68.59292,-3.33408 88.47214,-19.68372c21.93121,-18.0373 36.32784,-47.61874 41.33005,-74.63409c5.66589,-30.59982 5.4491,-67.12352 -1.29156,-95.95812c-7.33812,-31.39038 -22.99487,-61.94558 -47.14209,-82.01548c-22.23342,-18.47926 -52.95413,-26.24495 -84.59745,-31.16588l-32.93488,-1.64031l-8.39517,0" id="svg_15" fill="#000000"/>
-                    </g>
-                </svg>`;
-
             if (document.getElementById('gameBoard').children[i].innerHTML === '') {
                 if (gameData.gameBoardArr[i] === 'x') {
-                document.getElementById('gameBoard').children[i].innerHTML = xSVGhtml;
+                    document.getElementById('gameBoard').children[i].innerHTML = xSVGhtml;
                 } else if (gameData.gameBoardArr[i] === 'o') {
                     document.getElementById('gameBoard').children[i].innerHTML = oSVGhtml;
                 }
@@ -261,7 +285,7 @@ const gameDisplay = (() => {
     const aiOpponentName = document.querySelector(`#aiOpponentName`);
     const radioOpponents = document.querySelectorAll(`input[name='opponent']`);
 
-    const updateOpponentChecked = () => {
+    const updateCheckedOpponent = () => {
         if (radioPlayerTwo.checked) {
             playerTwoName.style.display = 'grid';
             aiOpponentName.style.display = 'none';
@@ -278,7 +302,7 @@ const gameDisplay = (() => {
     };
 
     for (const radioOpponent of radioOpponents) {
-        radioOpponent.addEventListener('change', updateOpponentChecked);
+        radioOpponent.addEventListener('change', updateCheckedOpponent);
     }
 
     const updateOpponent = (gameData) => {
@@ -299,19 +323,25 @@ const gameDisplay = (() => {
     const playerTwoNameField = document.getElementById('playerTwoName');
     const playerOneScoreBoardName = document.querySelector('.playerOne');
     const opponentScoreBoardName = document.querySelector('.opponent');
+    const playerOneStartsBtn = document.querySelector('#playerOneStarts');
+    const opponentStartsBtn = document.querySelector('#opponentStarts');
 
     const updatePlayerNames = () => {
         players.playerOne.setName(playerOneNameField.value ? playerOneNameField.value : 'Player 1');
         players.playerTwo.setName(playerTwoNameField.value ? playerTwoNameField.value : 'Player 2');
 
         playerOneScoreBoardName.textContent = players.playerOne.getName();
+        playerOneStartsBtn.textContent = players.playerOne.getName() + ' Starts';
         
         if (radioPlayerTwo.checked) {
             opponentScoreBoardName.textContent = players.playerTwo.getName();
+            opponentStartsBtn.textContent = players.playerTwo.getName() + ' Starts';
         } else if (radioMrGuesser.checked) {
             opponentScoreBoardName.textContent = players.mrGuesser.getName();
+            opponentStartsBtn.textContent = players.mrGuesser.getName() + ' Starts';
         } else if (radioMrUnbeatable.checked) {
             opponentScoreBoardName.textContent = players.mrUnbeatable.getName();
+            opponentStartsBtn.textContent = players.mrUnbeatable.getName() + ' Starts';
         }
     };
 
@@ -332,41 +362,47 @@ const gameDisplay = (() => {
 const players = (() => {
 
     const player = (playerName) => {
+        const getName = () => {
+            return playerName;
+        };
+
+        const setName = (newName) => {
+            playerName = newName;
+        };
+
         return {
-            getName() {
-                return playerName;
-            },
-            setName(newName) {
-                playerName = newName;
-            }
+            getName,
+            setName
         }
     };
 
     const guesser = () => {
-        return {
-            playMove(gameData) {
-                if (gameData.winner === '') {
-                    const possibleMoves = [];
+        const playMove = (gameData) => {
+            if (gameData.winner === '') {
+                const possibleMoves = [];
 
-                    for (let i = 0; i < 9; i++) {
-                        if (gameData.gameBoardArr[i] === '') {
-                            possibleMoves.push(i);
-                        }
+                for (let i = 0; i < 9; i++) {
+                    if (gameData.gameBoardArr[i] === '') {
+                        possibleMoves.push(i);
                     }
-
-                    const randomMoveIndex = (() => {
-                        return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-                    })();
-                    
-                    gameData.gameBoardArr[randomMoveIndex] = 'o';
-                    gameDisplay.updateGameDisplay(gameData);
-                    setTimeout(() => {
-                        document.getElementById('gameBoard').children[randomMoveIndex].querySelector('.oSVG').classList.add('drawn');
-                    });
-                    gameData.evaluateTurn();
-                    gameDisplay.popText('#gameMessage');
                 }
+
+                const randomMoveIndex = (() => {
+                    return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                })();
+                
+                gameData.gameBoardArr[randomMoveIndex] = 'o';
+                gameDisplay.updateGameDisplay(gameData);
+                setTimeout(() => {
+                    document.getElementById('gameBoard').children[randomMoveIndex].querySelector('.oSVG').classList.add('drawn');
+                }, 100);
+                gameData.evaluateTurn();
+                gameDisplay.popText('#gameMessage');
             }
+        }
+
+        return {
+            playMove
         }
     };
 
@@ -401,7 +437,7 @@ const players = (() => {
             }
         };
 
-        const turn = (gameState) => {
+        const turn = (gameData, gameState) => {
             let xCounter = 0;
             let oCounter = 0;
 
@@ -415,11 +451,21 @@ const players = (() => {
 
             // 'o' player is the maximizing player.
 
-            if (xCounter > oCounter) {
-                return 'max';
+            if (gameData.playerOneStarts) {
+                if (xCounter > oCounter) {
+                    return 'max';
+                } else {
+                    return 'min';
+                }
             } else {
-                return 'min';
+                if (oCounter > xCounter) {
+                    return 'min';
+                } else {
+                    return 'max';
+                }
             }
+
+            
         };
 
         const possibleMoves = (gameState) => {
@@ -433,10 +479,10 @@ const players = (() => {
             return moves;
         };
 
-        const result = (gameState, move) => {
+        const result = (gameData, gameState, move) => {
             const newGameState = [...gameState];
 
-            if (turn(gameState) === 'max') {
+            if (turn(gameData, gameState) === 'max') {
                 newGameState[move] = 'o';
             } else {
                 newGameState[move] = 'x';
@@ -448,16 +494,16 @@ const players = (() => {
             if (terminal(gameData, gameState)) {
                 return terminalValue(gameData, gameState);
             } else {
-                if (turn(gameState) === 'max') {
+                if (turn(gameData, gameState) === 'max') {
                     let maxValue = -Infinity;
                     possibleMoves(gameState).forEach((move) => {
-                        maxValue = Math.max(maxValue, minimax(gameData, [...result(gameState, move)]));
+                        maxValue = Math.max(maxValue, minimax(gameData, [...result(gameData, gameState, move)]));
                     });
                     return maxValue;
-                } else if (turn(gameState) === 'min') {
+                } else if (turn(gameData, gameState) === 'min') {
                     let minValue = Infinity;
                     possibleMoves(gameState).forEach((move) => {
-                        minValue = Math.min(minValue, minimax(gameData, [...result(gameState, move)]));
+                        minValue = Math.min(minValue, minimax(gameData, [...result(gameData, gameState, move)]));
                     });
                     return minValue;
                 }
@@ -471,7 +517,7 @@ const players = (() => {
                 const moveValueArr = [];
 
                 possibleMoves(gameState).forEach((move) => {
-                    moveValueArr[move] = minimax(gameData, [...result(gameState, move)]);
+                    moveValueArr[move] = minimax(gameData, [...result(gameData, gameState, move)]);
                 });
 
                 let bestValue = -Infinity;
