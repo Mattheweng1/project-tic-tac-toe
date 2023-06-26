@@ -7,7 +7,7 @@ const game = (() => {
 
     gameData.playerOneTurn = true;
     setTimeout(() => {
-        gameData.opponent = players.mrGuesser;
+        gameData.opponent = players.playerTwo;
     });
     gameData.playerOneScore = 0;
     gameData.opponentScore = 0;
@@ -15,88 +15,108 @@ const game = (() => {
     gameData.gameBoardArr = [];
 
     for (let i = 0; i < 9; i++) {
-        gameData.gameBoardArr.push({mark: ''});
+        gameData.gameBoardArr.push('');
     }
 
     setTimeout(() => gameDisplay.updateGameDisplay(gameData));
 
     const markBoard = (index) => {
         if (gameData.winner === '') {
-            if (gameData.gameBoardArr[index].mark === '') {
+            if (gameData.gameBoardArr[index] === '') {
                 if (gameData.playerOneTurn) {
-                    gameData.gameBoardArr[index].mark = 'x';
+                    gameData.gameBoardArr[index] = 'x';
                     gameDisplay.updateGameDisplay(gameData);
                     setTimeout(() => {
                         document.getElementById('gameBoard').children[index].querySelector('.xSVG').classList.add('drawn');
                     });
-                    evaluateTurn();
+                    gameData.evaluateTurn();
                     gameDisplay.popText('#gameMessage');
 
                     if (gameData.opponent === players.mrGuesser) {
-                        players.mrGuesser.playMove(gameData, evaluateTurn);
+                        players.mrGuesser.playMove(gameData);
+                    } else if (gameData.opponent === players.mrUnbeatable) {
+                        players.mrUnbeatable.playMove(gameData);
                     }
                 } else {
-                    gameData.gameBoardArr[index].mark = 'o';
+                    gameData.gameBoardArr[index] = 'o';
                     gameDisplay.updateGameDisplay(gameData);
                     setTimeout(() => {
                         document.getElementById('gameBoard').children[index].querySelector('.oSVG').classList.add('drawn');
                     });
-                    evaluateTurn();
+                    gameData.evaluateTurn();
                     gameDisplay.popText('#gameMessage');
                 }
             }
         }
     }
 
-    const checkWin = (mark) => {
+    gameData.checkWin = (gameState, mark, toDraw) => {
         let result = false;
         
-        if ([gameData.gameBoardArr[0], gameData.gameBoardArr[4], gameData.gameBoardArr[8]].every((obj) => obj.mark === mark)) {
-            document.getElementById('0to8strikeSVG').classList.add('drawn');
+        if ([gameState[0], gameState[4], gameState[8]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('0to8strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
-        if ([gameData.gameBoardArr[2], gameData.gameBoardArr[4], gameData.gameBoardArr[6]].every((obj) => obj.mark === mark)) {
-            document.getElementById('2to6strikeSVG').classList.add('drawn');
+        if ([gameState[2], gameState[4], gameState[6]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('2to6strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
-        if ([gameData.gameBoardArr[0], gameData.gameBoardArr[1], gameData.gameBoardArr[2]].every((obj) => obj.mark === mark)) {
-            document.getElementById('0to2strikeSVG').classList.add('drawn');
+        if ([gameState[0], gameState[1], gameState[2]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('0to2strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
-        if ([gameData.gameBoardArr[3], gameData.gameBoardArr[4], gameData.gameBoardArr[5]].every((obj) => obj.mark === mark)) {
-            document.getElementById('3to5strikeSVG').classList.add('drawn');
+        if ([gameState[3], gameState[4], gameState[5]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('3to5strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
-        if ([gameData.gameBoardArr[6], gameData.gameBoardArr[7], gameData.gameBoardArr[8]].every((obj) => obj.mark === mark)) {
-            document.getElementById('6to8strikeSVG').classList.add('drawn');
+        if ([gameState[6], gameState[7], gameState[8]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('6to8strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
-        if ([gameData.gameBoardArr[0], gameData.gameBoardArr[3], gameData.gameBoardArr[6]].every((obj) => obj.mark === mark)) {
-            document.getElementById('0to6strikeSVG').classList.add('drawn');
+        if ([gameState[0], gameState[3], gameState[6]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('0to6strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
-        if ([gameData.gameBoardArr[1], gameData.gameBoardArr[4], gameData.gameBoardArr[7]].every((obj) => obj.mark === mark)) {
-            document.getElementById('1to7strikeSVG').classList.add('drawn');
+        if ([gameState[1], gameState[4], gameState[7]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('1to7strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
-        if ([gameData.gameBoardArr[2], gameData.gameBoardArr[5], gameData.gameBoardArr[8]].every((obj) => obj.mark === mark)) {
-            document.getElementById('2to8strikeSVG').classList.add('drawn');
+        if ([gameState[2], gameState[5], gameState[8]].every((cell) => cell === mark)) {
+            if (toDraw) {
+                document.getElementById('2to8strikeSVG').classList.add('drawn');
+            }
             result = true;
         }
             
         return result;
     }
 
-    const checkFullBoard = () => {
-        if (gameData.gameBoardArr.every((obj) => obj.mark !== '')) {
-            document.getElementById('tieStrikeSVG').classList.add('drawn');
+    gameData.checkFullBoard = (gameState, toDraw) => {
+        if (gameState.every((cell) => cell !== '')) {
+            if (toDraw) {
+                document.getElementById('tieStrikeSVG').classList.add('drawn');
+            }
             return true;
         }
     }
@@ -105,11 +125,11 @@ const game = (() => {
         gameData.playerOneTurn = true;
         gameData.winner = '';
 
-        gameData.gameBoardArr.forEach((obj) => {
-            obj.mark = '';
-            gameDisplay.updateGameDisplay(gameData);
-        })
+        for (let i = 0; i < 9; i++) {
+            gameData.gameBoardArr[i] = '';
+        }
 
+        gameDisplay.updateGameDisplay(gameData);
         gameDisplay.popText('#gameMessage');
         Array.from(document.querySelectorAll('.strikeSVG')).forEach((svg) => {
             svg.classList.remove('drawn');
@@ -128,21 +148,21 @@ const game = (() => {
         gameDisplay.popText('.opponentScore');
     }
     
-    const evaluateTurn = () => {
+    gameData.evaluateTurn = () => {
         switch (true) {
-            case (checkWin('x')):
+            case (gameData.checkWin(gameData.gameBoardArr, 'x', true)):
                 gameData.playerOneScore++;
                 gameData.winner = 'p1';
                 gameDisplay.updateGameDisplay(gameData);
                 gameDisplay.popText('.playerOneScore');
                 break;
-            case  (checkWin('o')):
+            case  (gameData.checkWin(gameData.gameBoardArr, 'o', true)):
                 gameData.opponentScore++;
                 gameData.winner = 'p2'
                 gameDisplay.updateGameDisplay(gameData);
                 gameDisplay.popText('.opponentScore');
                 break;
-            case (checkFullBoard()):
+            case (gameData.checkFullBoard(gameData.gameBoardArr, true)):
                 gameData.winner = 'tie';
                 gameDisplay.updateGameDisplay(gameData);
                 gameDisplay.popText('.playerOneScore');
@@ -195,12 +215,12 @@ const gameDisplay = (() => {
                 </svg>`;
 
             if (document.getElementById('gameBoard').children[i].innerHTML === '') {
-                if (gameData.gameBoardArr[i].mark === 'x') {
+                if (gameData.gameBoardArr[i] === 'x') {
                 document.getElementById('gameBoard').children[i].innerHTML = xSVGhtml;
-                } else if (gameData.gameBoardArr[i].mark === 'o') {
+                } else if (gameData.gameBoardArr[i] === 'o') {
                     document.getElementById('gameBoard').children[i].innerHTML = oSVGhtml;
                 }
-            } else if (gameData.gameBoardArr[i].mark === '') {
+            } else if (gameData.gameBoardArr[i] === '') {
                 document.getElementById('gameBoard').children[i].innerHTML = '';
             }
         }
@@ -324,12 +344,12 @@ const players = (() => {
 
     const guesser = () => {
         return {
-            playMove(gameData, evaluateTurn) {
+            playMove(gameData) {
                 if (gameData.winner === '') {
                     const possibleMoves = [];
 
                     for (let i = 0; i < 9; i++) {
-                        if (gameData.gameBoardArr[i].mark === '') {
+                        if (gameData.gameBoardArr[i] === '') {
                             possibleMoves.push(i);
                         }
                     }
@@ -338,15 +358,153 @@ const players = (() => {
                         return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
                     })();
                     
-                    gameData.gameBoardArr[randomMoveIndex].mark = 'o';
+                    gameData.gameBoardArr[randomMoveIndex] = 'o';
                     gameDisplay.updateGameDisplay(gameData);
                     setTimeout(() => {
                         document.getElementById('gameBoard').children[randomMoveIndex].querySelector('.oSVG').classList.add('drawn');
                     });
-                    evaluateTurn();
+                    gameData.evaluateTurn();
                     gameDisplay.popText('#gameMessage');
                 }
             }
+        }
+    };
+
+    const unbeatable = () => {
+        const terminal = (gameData, gameState) => {
+            switch (true) {
+                case (gameData.checkWin(gameState, 'x', false)):
+                    return true;
+                    break;
+                case  (gameData.checkWin(gameState, 'o', false)):
+                    return true;
+                    break;
+                case (gameData.checkFullBoard(gameState, false)):
+                    return true;
+                    break;
+                default:
+                    return false;
+            }
+        };
+
+        const terminalValue = (gameData, gameState) => {
+            switch (true) {
+                case (gameData.checkWin(gameState, 'x', false)):
+                    return -1;
+                    break;
+                case (gameData.checkWin(gameState, 'o', false)):
+                    return 1;
+                    break;
+                case (gameData.checkFullBoard(gameState, false)):
+                    return 0;
+                    break;
+            }
+        };
+
+        const turn = (gameState) => {
+            let xCounter = 0;
+            let oCounter = 0;
+
+            gameState.forEach((cell) => {
+                if (cell === 'x') {
+                    xCounter++;
+                } else if (cell === 'o') {
+                    oCounter++;
+                }
+            })
+
+            // 'o' player is the maximizing player.
+
+            if (xCounter > oCounter) {
+                return 'max';
+            } else {
+                return 'min';
+            }
+        };
+
+        const possibleMoves = (gameState) => {
+            const moves = [];
+
+            for (let i = 0; i < 9; i++) {
+                if (gameState[i] === '') {
+                    moves.push(i);
+                }
+            }
+            return moves;
+        };
+
+        const result = (gameState, move) => {
+            const newGameState = [...gameState];
+
+            if (turn(gameState) === 'max') {
+                newGameState[move] = 'o';
+            } else {
+                newGameState[move] = 'x';
+            }
+            return newGameState;
+        };
+
+        const minimax = (gameData, gameState) => {
+            if (terminal(gameData, gameState)) {
+                return terminalValue(gameData, gameState);
+            } else {
+                if (turn(gameState) === 'max') {
+                    let maxValue = -Infinity;
+                    possibleMoves(gameState).forEach((move) => {
+                        maxValue = Math.max(maxValue, minimax(gameData, [...result(gameState, move)]));
+                    });
+                    return maxValue;
+                } else if (turn(gameState) === 'min') {
+                    let minValue = Infinity;
+                    possibleMoves(gameState).forEach((move) => {
+                        minValue = Math.min(minValue, minimax(gameData, [...result(gameState, move)]));
+                    });
+                    return minValue;
+                }
+            }
+        };
+
+        const playMove = (gameData) => {
+            if (gameData.winner === '') {
+                const gameState = [...gameData.gameBoardArr];
+
+                const moveValueArr = [];
+
+                possibleMoves(gameState).forEach((move) => {
+                    moveValueArr[move] = minimax(gameData, [...result(gameState, move)]);
+                });
+
+                let bestValue = -Infinity;
+
+                moveValueArr.forEach((value) => {
+                    if (value > bestValue) {
+                        bestValue = value;
+                    }
+                });
+
+                const bestMoves = [];
+
+                while (moveValueArr.lastIndexOf(bestValue) !== -1) {
+                    bestMoves.push(moveValueArr.lastIndexOf(bestValue));
+                    moveValueArr.splice(moveValueArr.lastIndexOf(bestValue), 1);
+                }
+
+                const randomBestMoveIndex = (() => {
+                    return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+                })();
+                
+                gameData.gameBoardArr[randomBestMoveIndex] = 'o';
+                gameDisplay.updateGameDisplay(gameData);
+                setTimeout(() => {
+                    document.getElementById('gameBoard').children[randomBestMoveIndex].querySelector('.oSVG').classList.add('drawn');
+                });
+                gameData.evaluateTurn();
+                gameDisplay.popText('#gameMessage');
+            }
+        };
+
+        return {
+            playMove
         }
     };
 
@@ -356,7 +514,7 @@ const players = (() => {
 
     const mrGuesser = Object.assign({}, player('Mr. Guesser'), guesser());
 
-    const mrUnbeatable = Object.assign({}, player('Mr. Unbeatable'));
+    const mrUnbeatable = Object.assign({}, player('Mr. Unbeatable'), unbeatable());
     
     return {
         playerOne,
