@@ -490,21 +490,31 @@ const players = (() => {
             return newGameState;
         };
 
-        const minimax = (gameData, gameState) => {
+        const minimax = (gameData, gameState, alpha, beta) => {
             if (terminal(gameData, gameState)) {
                 return terminalValue(gameData, gameState);
             } else {
                 if (turn(gameData, gameState) === 'max') {
                     let maxValue = -Infinity;
-                    possibleMoves(gameState).forEach((move) => {
-                        maxValue = Math.max(maxValue, minimax(gameData, [...result(gameData, gameState, move)]));
-                    });
+                    for (const move of possibleMoves(gameState)) {
+                        value = minimax(gameData, [...result(gameData, gameState, move)], alpha, beta);
+                        maxValue = Math.max(maxValue, value);
+                        alpha = Math.max(alpha, value)
+                        if (beta <= alpha) {
+                            break;
+                        }
+                    }
                     return maxValue;
                 } else if (turn(gameData, gameState) === 'min') {
                     let minValue = Infinity;
-                    possibleMoves(gameState).forEach((move) => {
-                        minValue = Math.min(minValue, minimax(gameData, [...result(gameData, gameState, move)]));
-                    });
+                    for (const move of possibleMoves(gameState)) {
+                        value = minimax(gameData, [...result(gameData, gameState, move)], alpha, beta)
+                        minValue = Math.min(minValue, value);
+                        beta = Math.min(beta, value);
+                        if (beta <= alpha) {
+                            break;
+                        }
+                    }
                     return minValue;
                 }
             }
@@ -516,9 +526,9 @@ const players = (() => {
 
                 const moveValueArr = [];
 
-                possibleMoves(gameState).forEach((move) => {
-                    moveValueArr[move] = minimax(gameData, [...result(gameData, gameState, move)]);
-                });
+                for (const move of possibleMoves(gameState)) {
+                    moveValueArr[move] = minimax(gameData, [...result(gameData, gameState, move)], -Infinity, Infinity);
+                }
 
                 let bestValue = -Infinity;
 
